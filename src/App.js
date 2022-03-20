@@ -6,23 +6,33 @@ const App = () => {
 
   const [apiData, setApiData] = React.useState([])
   const [isLoading, setIsLoading] = React.useState(true)
+  const [answerKey, setAnswerKey] = React.useState([])
 
   React.useEffect(() => {
     async function fetchData() {
       setIsLoading(true)
       const fetcher = await fetch("https://opentdb.com/api.php?amount=5&category=30&difficulty=easy&type=multiple")
       const res = await fetcher.json()
-      setApiData(() => res)
+      setApiData(() => {
+        console.log(res)
+        setAnswerKey(prev => {
+          return res.results.map(result => {
+            return {
+              question: result.question,
+              answer: result.correct_answer
+            }
+          })
+        })
+        return res
+      })
       setIsLoading(false)
     }
     fetchData()
   }, [])
 
-  function selectedAnswer() {
-    console.log(`clicked`)
-    console.log(apiData)
+  function selectedAnswer(question, answer) {
+    console.log(`question: ${question}, answer: ${answer}`)
     //desturcture apiData
-    const [q1, q2, q3, q4, q5] = apiData
     // category: "Science: Gadgets"
     // correct_answer: "1996"
     // difficulty: "easy"
@@ -36,13 +46,29 @@ const App = () => {
     // type: "multiple"
   }
 
-  function setQAComponents() {
+  function setQAComponents(data) {
+    return data.results.map(result => {
+      const question = result.question
+      const correctAnswer = result.correct_answer
+      const allAnswersInRandomOrder = randomizeArray([correctAnswer ,...result.incorrect_answers])
+      return (
+        <QAContainer key={isLoading ? "Loading From Database" : question} question={isLoading ? "Loading From Database" : question} answers={allAnswersInRandomOrder} selectedAnswer={selectedAnswer} />
+      )
+    })
+  }
 
+  function randomizeArray(array) {
+    if (array.length === 1) {
+      return array
+    }
+    const randomArrayElement = array[Math.floor(Math.random() * array.length)]
+    const removedElementArray = array.filter(e => e !== randomArrayElement)
+    return [randomArrayElement, ...randomizeArray(removedElementArray)]
   }
 
   return (
     <div>
-      <QAContainer question={isLoading ? "loading" : apiData.results[0].question} answers={[1, 2, 3, 4]} selectedAnswer={selectedAnswer} />
+      {isLoading ? <h1>Loading</h1> : setQAComponents(apiData)}
     </div>
   )
 }
