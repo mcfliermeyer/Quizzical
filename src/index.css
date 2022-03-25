@@ -1,13 +1,61 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+
+  background-color: aqua;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+:root {
+  --buttons-gap: 0.5rem;
+}
+.app {
+  margin: 0 auto;
+}
+
+.qa-container {
+  padding: 0.5rem 2rem;
+  text-align: center;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.qa-container__answer-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-rows: repeat(auto-fit, 1fr);
+  gap: var(--buttons-gap);
+}
+
+.qa-container__answer-container__grid-div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-rows: repeat(auto-fit, 1fr);
+  gap: var(--buttons-gap);
+}
+
+.qa-container__answer-btn,
+.submit-answers-btn {
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.3rem;
+}
+
+.submit-answers-btn {
+  display: block;
+  padding: clamp(1rem, 1.2rem, 2rem) clamp(2rem, 5rem, 6rem);
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  margin-left: auto;
+  margin-right: auto;
 }

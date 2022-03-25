@@ -1,37 +1,49 @@
-import './App.css';
-import React from "react"
+import "./App.css";
+import React, { useCallback } from "react";
 import QAContainer from "./components/QAContainer";
+import randomizeArray from "./utilities/randomizeArray";
+import SubmitAnswers from "./components/SubmitAnswers";
+
+//TODO: style components
+// responsive layout is done
+//refactor logic
+//possibly useContext or useReducer?
 
 const App = () => {
-
-  const [apiData, setApiData] = React.useState([])
-  const [isLoading, setIsLoading] = React.useState(true)
-  const [answerKey, setAnswerKey] = React.useState([])
+  const [apiData, setApiData] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [answerKey, setAnswerKey] = React.useState({});
+  const [userAnswers, setUserAnswers] = React.useState({});
 
   React.useEffect(() => {
     async function fetchData() {
-      setIsLoading(true)
-      const fetcher = await fetch("https://opentdb.com/api.php?amount=5&category=30&difficulty=easy&type=multiple")
-      const res = await fetcher.json()
+      setIsLoading(true);
+      const fetcher = await fetch(
+        "https://opentdb.com/api.php?amount=5&category=30&difficulty=easy&type=multiple"
+      );
+      const res = await fetcher.json();
       setApiData(() => {
-        console.log(res)
-        setAnswerKey(prev => {
-          return res.results.map(result => {
+        setAnswerKey((prev) => {
+          const fart = res.results.map((result) => {
             return {
-              question: result.question,
-              answer: result.correct_answer
-            }
-          })
-        })
-        return res
-      })
-      setIsLoading(false)
+              [result.question]: result.correct_answer,
+            };
+          });
+          return Object.assign(...fart); //flattens array of objects into one object
+        });
+        const qaObject = res.results.map((result) => {
+          const q = result.question;
+          const a = randomizeArray([result.correct_answer, ...result.incorrect_answers]); //prettier-ignore
+          return { question: q, answers: a };
+        });
+        return qaObject;
+      });
+      setIsLoading(false);
     }
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
-  function selectedAnswer(question, answer) {
-    console.log(`question: ${question}, answer: ${answer}`)
+  const handleSelectedAnswer = (userQuestion, userAnswer) => {
     //desturcture apiData
     // category: "Science: Gadgets"
     // correct_answer: "1996"
@@ -44,33 +56,54 @@ const App = () => {
     // [[Prototype]]: Array(0)
     // question: "When was the Tamagotchi digital pet released?"
     // type: "multiple"
-  }
 
-  function setQAComponents(data) {
-    return data.results.map(result => {
-      const question = result.question
-      const correctAnswer = result.correct_answer
-      const allAnswersInRandomOrder = randomizeArray([correctAnswer ,...result.incorrect_answers])
-      return (
-        <QAContainer key={isLoading ? "Loading From Database" : question} question={isLoading ? "Loading From Database" : question} answers={allAnswersInRandomOrder} selectedAnswer={selectedAnswer} />
-      )
-    })
-  }
+    setUserAnswers((oldAnswers) => {
+      return {
+        ...oldAnswers,
+        [userQuestion]: userAnswer,
+      };
+    });
 
-  function randomizeArray(array) {
-    if (array.length === 1) {
-      return array
+    checkAnswers();
+  };
+
+  function checkAnswers() {
+    //check if all questions are answered
+    if (Object.keys(userAnswers).length !== apiData.length) {
+      console.log("please answer all questions");
     }
-    const randomArrayElement = array[Math.floor(Math.random() * array.length)]
-    const removedElementArray = array.filter(e => e !== randomArrayElement)
-    return [randomArrayElement, ...randomizeArray(removedElementArray)]
+    const allKeys = Object.keys(answerKey);
+
+    allKeys.forEach((key) => {
+      if (userAnswers[key] === answerKey[key]) {
+        //will compare the answers using state
+        console.log(userAnswers[key]);
+        console.log(answerKey[key]);
+      } else {
+        console.log("wrong!!!");
+      }
+    });
   }
 
   return (
-    <div>
-      {isLoading ? <h1>Loading</h1> : setQAComponents(apiData)}
+    <div className="app">
+      {isLoading ? (
+        <h1>Loading</h1>
+      ) : (
+        apiData.map((result, index) => {
+          return (
+            <QAContainer
+              key={index}
+              question={result.question}
+              answers={result.answers}
+              selectedAnswer={handleSelectedAnswer}
+            />
+          );
+        })
+      )}
+      {isLoading || <SubmitAnswers />}
     </div>
-  )
-}
+  );
+};
 
 export default App;
