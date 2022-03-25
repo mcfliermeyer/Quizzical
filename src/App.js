@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useCallback } from "react";
+import React from "react";
 import QAContainer from "./components/QAContainer";
 import randomizeArray from "./utilities/randomizeArray";
 import SubmitAnswers from "./components/SubmitAnswers";
@@ -34,7 +34,7 @@ const App = () => {
         const qaObject = res.results.map((result) => {
           const q = result.question;
           const a = randomizeArray([result.correct_answer, ...result.incorrect_answers]); //prettier-ignore
-          return { question: q, answers: a };
+          return { question: q, answers: a.map(result => ({answers: result, isSelected: false})) };
         });
         return qaObject;
       });
@@ -96,6 +96,7 @@ const App = () => {
               key={index}
               question={result.question}
               answers={result.answers}
+              userAnswers={userAnswers}
               selectedAnswer={handleSelectedAnswer}
             />
           );
