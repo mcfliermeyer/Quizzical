@@ -7,8 +7,8 @@ import reportWebVitals from './reportWebVitals';
 ReactDOM.render(
   <React.StrictMode>
     <App />
-    <div class="container">
-      <ul class="circleToSquares">
+    <div className="container">
+      <ul className="circleToSquares">
         <li></li>
         <li></li>
         <li></li>
