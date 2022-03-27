@@ -9,10 +9,13 @@ function QAContainer({
   handleSelectedAnswer,
   eachAnswerStyle,
 }) {
-  const selectedStyle = {
-    backgroundColor: "#2bcabde6",
-  };
 
+  const selectedStyle = {
+    boxShadow: "inset 0 5px 8px 2px rgba(0, 0, 0, 0.5)",
+  };
+  const unSelectedStyle = {
+    boxShadow: "0 5px 8px rgba(0, 0, 0, 0.5), inset 0 -2px 6px 2px rgba(0, 0, 0, 0.5)", //prettier-ignore
+  };
   function applyStyle(answerIndex) {
     if (eachAnswerStyle.length > 0) {
       return eachAnswerStyle[answerIndex];
@@ -20,14 +23,17 @@ function QAContainer({
     if (answers[answerIndex].isSelected) {
       return selectedStyle;
     }
+    else {
+      return unSelectedStyle
+    }
   }
   return (
-    <div className="qa-container">
+    <div className="qa-container clay-morphism-container">
       <h3 className="question">{question}</h3>
       <div className="qa-container__answer-container">
         <div className="qa-container__answer-container__grid-div">
           <button
-            className="qa-container__answer-btn"
+            className="qa-container__answer-btn clay-morphism-button"
             style={applyStyle(0)}
             onClick={() =>
               handleSelectedAnswer(question, index, answers[0].answer)
@@ -36,7 +42,7 @@ function QAContainer({
             {answers[0].answer}
           </button>
           <button
-            className="qa-container__answer-btn"
+            className="qa-container__answer-btn clay-morphism-button"
             style={applyStyle(1)}
             onClick={() =>
               handleSelectedAnswer(question, index, answers[1].answer)
@@ -47,7 +53,7 @@ function QAContainer({
         </div>
         <div className="qa-container__answer-container__grid-div">
           <button
-            className="qa-container__answer-btn"
+            className="qa-container__answer-btn clay-morphism-button"
             style={applyStyle(2)}
             onClick={() =>
               handleSelectedAnswer(question, index, answers[2].answer)
@@ -56,7 +62,7 @@ function QAContainer({
             {answers[2].answer}
           </button>
           <button
-            className="qa-container__answer-btn"
+            className="qa-container__answer-btn clay-morphism-button"
             style={applyStyle(3)}
             onClick={() =>
               handleSelectedAnswer(question, index, answers[3].answer)

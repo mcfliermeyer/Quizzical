@@ -93,13 +93,16 @@ const App = () => {
   function setFinalAnswerStyle() {
     if (allQuestionsAnswered()) {
       const correctAnswerStyle = {
-        backgroundColor: "green",
+        backgroundColor: "#30DB1A",
       };
       const wrongAnswerStyle = {
-        backgroundColor: "red",
+        backgroundColor: "#F02719",
       };
-      const defaultAnswerStyle = {
-        backgroundColor: "white",
+      const selectedAnswer = {
+        boxShadow: "inset 0 5px 8px 2px rgba(0, 0, 0, 0.5)",
+      };
+      const notSelectedAnswer = {
+        boxShadow: "0 5px 8px rgba(0, 0, 0, 0.5), inset 0 -2px 6px 2px rgba(0, 0, 0, 0.5)", //prettier-ignore
       };
       const answerStyles = apiData.map((questionObject) => {
         //questionObject has form {question: question, answers: [answers(4)]}
@@ -112,17 +115,17 @@ const App = () => {
             answerKey[question] !== answer &&
             userAnswers[question] === answer
           ) {
-            return wrongAnswerStyle;
+            return {...wrongAnswerStyle, ...selectedAnswer};
           }
           //if answer is in answer key, turn green, then check if answer is in user answers and increase correct answers
           if (answerKey[question] === answer) {
             if (userAnswers[question] === answer) {
               //todo add to correct answers
+              return {...correctAnswerStyle, ...selectedAnswer}
             }
-            return correctAnswerStyle;
+            return {...correctAnswerStyle, ...notSelectedAnswer};
           }
-          //otherwise keep default color
-          return defaultAnswerStyle;
+          return notSelectedAnswer
         });
         return mappedAnswerStyles
       });
@@ -150,7 +153,11 @@ const App = () => {
           );
         })
       )}
-      {isLoading || <SubmitAnswers handleClick={setFinalAnswerStyle} />}
+      {isLoading || (
+        <SubmitAnswers
+          handleClick={setFinalAnswerStyle}
+        />
+      )}
     </div>
   );
 };
