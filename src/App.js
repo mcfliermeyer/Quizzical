@@ -1,4 +1,5 @@
 import "./App.css";
+import { Buffer } from "buffer";
 import React from "react";
 import QAContainer from "./components/QAContainer";
 import randomizeArray from "./utilities/randomizeArray";
@@ -15,21 +16,31 @@ const App = () => {
     async function fetchData() {
       setIsLoading(true);
       const fetcher = await fetch(
-        "https://opentdb.com/api.php?amount=5&category=30&difficulty=easy&type=multiple"
+        // "https://opentdb.com/api.php?amount=6&category=30&difficulty=easy&type=multiple"
+        `https://opentdb.com/api.php?amount=10&difficulty=easy&type=multiple&encode=base64`
       );
       const res = await fetcher.json();
       setApiData(() => {
         setAnswerKey((prev) => {
           const fart = res.results.map((result) => {
+            const question = Buffer.from(result.question, "base64").toString("ascii") //prettier-ignore
+            const correctAnswer = Buffer.from(result.correct_answer, "base64").toString("ascii") //prettier-ignore
             return {
-              [result.question]: result.correct_answer,
+              [question]: correctAnswer,
             };
           });
           return Object.assign(...fart); //flattens array of objects into one object
         });
         const qaObject = res.results.map((result) => {
-          const q = result.question;
-          const a = randomizeArray([result.correct_answer, ...result.incorrect_answers]); //prettier-ignore
+          const q = Buffer.from(result.question, "base64").toString("ascii") //prettier-ignore
+          const correctA = Buffer.from(result.correct_answer, "base64").toString("ascii") //prettier-ignore
+          console.log(result.incorrect_answers.length)
+          const incorrectAnswers = result.incorrect_answers.map(a => Buffer.from(a, "base64").toString('ascii'))
+          console.log(incorrectAnswers)
+          // const incorrectA1 = Buffer.from(result.incorrect_answers[0], "base64").toString("ascii") //prettier-ignore
+          // const incorrectA2 = Buffer.from(result.incorrect_answers[1], "base64").toString("ascii") //prettier-ignore
+          // const incorrectA3 = Buffer.from(result.incorrect_answers[2], "base64").toString("ascii") //prettier-ignore
+          const a = randomizeArray([correctA, ...incorrectAnswers]); //prettier-ignore
           return {
             question: q,
             answers: a.map((result) => ({ answer: result, isSelected: false })),
