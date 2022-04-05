@@ -29,7 +29,8 @@ code {
   --circles-color: rgba(51, 247, 231, 0.514);
   --box-shadow-outset-color: rgb(146, 155, 163);
   --box-shadow-inset-color: rgb(135, 144, 153);
-  --clay-button-color: rgb(25, 189, 175);
+  --clay-button-color:#9319cf;
+   /* rgb(25, 189, 175); */
   --clay-button-outset-color: rgba(29, 141, 132, 0.9);
   --clay-button-inset-color: rgba(42, 209, 195, 0.9);
 }

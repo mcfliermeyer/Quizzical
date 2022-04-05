@@ -1,103 +1,134 @@
 import "./App.css";
 import { Buffer } from "buffer";
-import React from "react";
+import React, { useState, useReducer } from "react";
 import QAContainer from "./components/QAContainer";
 import randomizeArray from "./utilities/randomizeArray";
 import SubmitAnswers from "./components/SubmitAnswers";
 
 const App = () => {
-  const [apiData, setApiData] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [answerKey, setAnswerKey] = React.useState({});
-  const [userAnswers, setUserAnswers] = React.useState({});
-  const [finalAnswerStyles, setFinalAnswerStyles] = React.useState([])
+  const [isLoading, setIsLoading] = useState(true);
+  const [state, dispatch] = useReducer(reducer, {});
+
+  function reducer(state, action) {
+    switch (action.type) {
+      case "INITSTATE":
+        return {...action.payload};
+      case "ANSWERSELECTED":
+        return {...state, ...action.payload}
+      case "SUBMITANSWERS":
+
+        console.log(`here is in payload`)
+        console.log(action.payload);
+        console.log(state)
+        return {...state, finalAnswerStyles: action.payload}
+      default:
+        return;
+    }
+  }
+
+  const modal = document.querySelector(".modal");
 
   React.useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
       const fetcher = await fetch(
         // "https://opentdb.com/api.php?amount=6&category=30&difficulty=easy&type=multiple"
-        `https://opentdb.com/api.php?amount=10&difficulty=easy&type=multiple&encode=base64`
+        `https://opentdb.com/api.php?amount=2&difficulty=easy&type=multiple&encode=base64`
       );
       const res = await fetcher.json();
-      setApiData(() => {
-        setAnswerKey((prev) => {
-          const fart = res.results.map((result) => {
-            const question = Buffer.from(result.question, "base64").toString("ascii") //prettier-ignore
-            const correctAnswer = Buffer.from(result.correct_answer, "base64").toString("ascii") //prettier-ignore
-            return {
-              [question]: correctAnswer,
-            };
-          });
-          return Object.assign(...fart); //flattens array of objects into one object
-        });
-        const qaObject = res.results.map((result) => {
-          const q = Buffer.from(result.question, "base64").toString("ascii") //prettier-ignore
-          const correctA = Buffer.from(result.correct_answer, "base64").toString("ascii") //prettier-ignore
-          console.log(result.incorrect_answers.length)
-          const incorrectAnswers = result.incorrect_answers.map(a => Buffer.from(a, "base64").toString('ascii'))
-          console.log(incorrectAnswers)
-          // const incorrectA1 = Buffer.from(result.incorrect_answers[0], "base64").toString("ascii") //prettier-ignore
-          // const incorrectA2 = Buffer.from(result.incorrect_answers[1], "base64").toString("ascii") //prettier-ignore
-          // const incorrectA3 = Buffer.from(result.incorrect_answers[2], "base64").toString("ascii") //prettier-ignore
-          const a = randomizeArray([correctA, ...incorrectAnswers]); //prettier-ignore
-          return {
-            question: q,
-            answers: a.map((result) => ({ answer: result, isSelected: false })),
-          };
-        });
-        return qaObject;
-      });
+      const stateFromApi = setInitialState(res)
+      dispatch({type: 'INITSTATE', payload: stateFromApi})
       setIsLoading(false);
     }
     fetchData();
   }, []);
 
-  const handleSelectedAnswer = (question, index, answer) => {
-    setApiData((oldData) => {
-      const newApiData = oldData.map((obj, i) => {
-        if (index === i) {
-          return {
-            question: obj.question,
-            answers: obj.answers.map((mapAnswer) => {
-              if (mapAnswer.answer === answer) {
-                return mapAnswer.isSelected
-                  ? {
-                      answer: mapAnswer.answer,
-                      isSelected: true,
-                    }
-                  : {
-                      answer: mapAnswer.answer,
-                      isSelected: !mapAnswer.isSelected,
-                    };
-              } else {
-                return {
-                  answer: mapAnswer.answer,
-                  isSelected: false,
-                };
-              }
-            }),
-          };
-        } else {
-          return obj;
-        }
-      });
-      return newApiData;
-    });
-    setUserAnswers((oldAnswers) => {
+  function setInitialState(apiData) {
+    const answerKey = setAnswerKeyFromApiData(apiData);
+    const questionsAndAnswers = setQuestionsAndRandomizedAnswersFromApiData(apiData); //prettier-ignore
+    const userAnswers = {}
+    const finalAnswerStyles = []
+    return {
+      answerKey: answerKey,
+      questionsAndAnswers: questionsAndAnswers,
+      userAnswers: userAnswers,
+      finalAnswerStyles: finalAnswerStyles
+    }
+  }
+
+  function setAnswerKeyFromApiData(apiData) {
+    //returns one large object with all q:a key value pairs
+    const answerKey = apiData.results.map((result) => {
+      const question = Buffer.from(result.question, "base64").toString("ascii") //prettier-ignore
+      const correctAnswer = Buffer.from(result.correct_answer, "base64").toString("ascii") //prettier-ignore
       return {
-        ...oldAnswers,
-        [question]: answer,
+        [question]: correctAnswer,
       };
     });
+    return Object.assign(...answerKey); //flattens array of objects into one object
+  }
+
+  function setQuestionsAndRandomizedAnswersFromApiData(apiData) {
+    //returns object of [{question: q, answers:[{answer: a, isSeleted}]},...]
+    return apiData.results.map((result) => {
+      const question = Buffer.from(result.question, "base64").toString("ascii") //prettier-ignore
+      const correctAnswer = Buffer.from(result.correct_answer, "base64").toString("ascii") //prettier-ignore
+      const incorrectAnswers = result.incorrect_answers.map((answer) =>
+        Buffer.from(answer, "base64").toString("ascii")
+      );
+      const allAnswers = randomizeArray([correctAnswer, ...incorrectAnswers]); //prettier-ignore
+      return {
+        question: question,
+        answers: allAnswers.map((result) => ({
+          answer: result,
+          isSelected: false,
+        })),
+      };
+    });
+  }
+
+  const handleSelectedAnswer = (question, index, answer) => {
+    const newState = state.questionsAndAnswers.map((obj, i) => {
+      if (index === i) {
+        return {
+          question: obj.question,
+          answers: obj.answers.map((mapAnswer) => {
+            if (mapAnswer.answer === answer) {
+              //checks if answer clicked is the same, if not, select new answer and default others
+              return mapAnswer.isSelected
+                ? {
+                    answer: mapAnswer.answer,
+                    isSelected: true,
+                  }
+                : {
+                    answer: mapAnswer.answer,
+                    isSelected: !mapAnswer.isSelected,
+                  };
+            } else {
+              return {
+                answer: mapAnswer.answer,
+                isSelected: false,
+              };
+            }
+          }),
+        };
+      } else {
+        return obj;
+      }
+    });
+    const newAnswers = {...state.userAnswers, [question]: answer}
+    const newPayload = {questionsAndAnswers: newState, userAnswers: newAnswers}
+    dispatch({type: 'ANSWERSELECTED', payload: newPayload})
   };
 
   function allQuestionsAnswered() {
     //check if all questions are answered
-    if (Object.keys(userAnswers).length !== Object.keys(apiData).length) {
+    if (Object.keys(state.userAnswers).length !== Object.keys(state.questionsAndAnswers).length) {
       console.log("please answer all questions");
       return false;
     }
+    console.log("returning true")
+    console.log(state)
     return true;
   }
 
@@ -115,33 +146,34 @@ const App = () => {
       const notSelectedAnswer = {
         boxShadow: "0 5px 8px rgba(0, 0, 0, 0.5), inset 0 -2px 6px 2px rgba(0, 0, 0, 0.5)", //prettier-ignore
       };
-      const answerStyles = apiData.map((questionObject) => {
+      const answerStyles = state.questionsAndAnswers.map((questionObject) => {
         //questionObject has form {question: question, answers: [answers(4)]}
         const question = questionObject.question;
         const answers = questionObject.answers;
         const mappedAnswerStyles = answers.map((answerObject) => {
-          const answer = answerObject.answer
+          const answer = answerObject.answer;
           //if answer is selected and not in key, turn red
           if (
-            answerKey[question] !== answer &&
-            userAnswers[question] === answer
+            state.answerKey[question] !== answer &&
+            state.userAnswers[question] === answer
           ) {
-            return {...wrongAnswerStyle, ...selectedAnswer};
+            return { ...wrongAnswerStyle, ...selectedAnswer };
           }
           //if answer is in answer key, turn green, then check if answer is in user answers and increase correct answers
-          if (answerKey[question] === answer) {
-            if (userAnswers[question] === answer) {
+          if (state.answerKey[question] === answer) {
+            if (state.userAnswers[question] === answer) {
               //todo add to correct answers
-              return {...correctAnswerStyle, ...selectedAnswer}
+              return { ...correctAnswerStyle, ...selectedAnswer };
             }
-            return {...correctAnswerStyle, ...notSelectedAnswer};
+            return { ...correctAnswerStyle, ...notSelectedAnswer };
           }
-          return notSelectedAnswer
+          return notSelectedAnswer;
         });
-        return mappedAnswerStyles
+        return mappedAnswerStyles;
       });
-      setFinalAnswerStyles(answerStyles)
-    } 
+      dispatch({ type: "SUBMITANSWERS", payload: answerStyles});
+      //modal.show();
+    }
   }
 
   return (
@@ -149,7 +181,7 @@ const App = () => {
       {isLoading ? (
         <h1>Loading</h1>
       ) : (
-        apiData.map((result, index) => {
+        state.questionsAndAnswers.map((result, index) => {
           return (
             <QAContainer
               key={index}
@@ -157,18 +189,17 @@ const App = () => {
               question={result.question}
               answers={result.answers}
               eachAnswerStyle={
-                finalAnswerStyles.length > 0 ? finalAnswerStyles[index] : []
+                state.finalAnswerStyles.length > 0 ? state.finalAnswerStyles[index] : []
               }
               handleSelectedAnswer={handleSelectedAnswer}
             />
           );
         })
       )}
-      {isLoading || (
-        <SubmitAnswers
-          handleClick={setFinalAnswerStyle}
-        />
-      )}
+      {isLoading || <SubmitAnswers handleClick={setFinalAnswerStyle} />}
+      <dialog className="modal">
+        <h1>Please answer all questions</h1>
+      </dialog>
     </div>
   );
 };
