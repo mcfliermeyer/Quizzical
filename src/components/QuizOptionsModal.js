@@ -10,7 +10,6 @@ import uuid from "react-uuid";
 import SubmitAnswersButton from "./SubmitAnswersButton";
 
 const StyledQuizOptionsModal = styled.dialog`
-  background-color: rgba(29, 141, 132, 1);
   background-color: ${(props) => props.theme.colors.containerColor};
   display: flex;
   flex-direction: column;
@@ -20,13 +19,12 @@ const StyledQuizOptionsModal = styled.dialog`
   position: absolute;
   top: -1rem;
   left: 0;
-  z-index: 1;
+  z-index: 0;
   border: none;
   border-radius: 15px;
 `;
 
 const QuizOptionsModal = ({ quizOptions, onOptionsChange }) => {
-  const [isVisible, setIsVisible] = useState(true);
   const [localQuizOptions, setLocalQuizOptions] = useState({
     numOfQuestions: 0,
     category: "",
@@ -52,10 +50,9 @@ const QuizOptionsModal = ({ quizOptions, onOptionsChange }) => {
     }
   }
   function handleSubmit() {
-    onOptionsChange(localQuizOptions)
-    setIsVisible((oldVal) => !oldVal);
+    onOptionsChange({...localQuizOptions, modalVisible: false})
   }
-  if (isVisible) {
+  if (quizOptions.modalVisible) {
     return (
       <StyledQuizOptionsModal open className="modal">
         <RadioButtonGroup
@@ -77,27 +74,9 @@ const QuizOptionsModal = ({ quizOptions, onOptionsChange }) => {
       </StyledQuizOptionsModal>
     );
   } else {
+    console.log("no longer visible")
     return (
-      <StyledQuizOptionsModal className="modal">
-        <RadioButtonGroup
-          buttonsNeededInfo={questionsInfo}
-          onValueChange={onValueChange}
-          quizOptions={quizOptions}
-          key={uuid()}
-        ></RadioButtonGroup>
-        <RadioButtonGroup
-          buttonsNeededInfo={categoryInfo}
-          onValueChange={onValueChange}
-          quizOptions={quizOptions}
-          key={uuid()}
-        ></RadioButtonGroup>
-        <RadioButtonGroup
-          buttonsNeededInfo={difficultyInfo}
-          onValueChange={onValueChange}
-          quizOptions={quizOptions}
-          key={uuid()}
-        ></RadioButtonGroup>
-      </StyledQuizOptionsModal>
+      <></>
     );
   }
 };

@@ -15,6 +15,7 @@ const App = () => {
     numOfQuestions: 0,
     category: "Any",
     difficulty: "Any",
+    modalVisible: true,
   });
   const [state, dispatch] = useReducer(reducer, {});
 
@@ -173,12 +174,6 @@ const App = () => {
 
   function changeOptions(optionChange) {
     setQuizOptions((oldOptions) => optionChange)
-    //   ...oldOptions,
-    //   [optionChange.name]:
-    //     typeof optionChange.value === Number
-    //       ? Number(optionChange.value)
-    //       : optionChange.value,
-    // }))
   }
 
   return (
