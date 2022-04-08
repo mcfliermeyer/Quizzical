@@ -3,58 +3,61 @@ import { Buffer } from "buffer";
 import React, { useState, useReducer } from "react";
 import QAContainer from "./components/QAContainer";
 import randomizeArray from "./utilities/randomizeArray";
-import SubmitAnswers from "./components/SubmitAnswers";
+import SubmitAnswersButton from "./components/SubmitAnswersButton";
+import QuizOptionsModal from "./components/QuizOptionsModal";
+import getIdWithName from "./utilities/categoryAndId.js";
+import { ThemeProvider } from "styled-components";
+import { theme } from "./utilities/themeStyles";
+import uuid from "react-uuid";
 
 const App = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [quizOptions, setQuizOptions] = useState({
+    numOfQuestions: 0,
+    category: "Any",
+    difficulty: "Any",
+  });
   const [state, dispatch] = useReducer(reducer, {});
 
   function reducer(state, action) {
     switch (action.type) {
       case "INITSTATE":
-        return {...action.payload};
+        return { ...action.payload };
       case "ANSWERSELECTED":
-        return {...state, ...action.payload}
+        return { ...state, ...action.payload };
       case "SUBMITANSWERS":
-
-        console.log(`here is in payload`)
-        console.log(action.payload);
-        console.log(state)
-        return {...state, finalAnswerStyles: action.payload}
+        return { ...state, finalAnswerStyles: action.payload };
       default:
         return;
     }
   }
 
-  const modal = document.querySelector(".modal");
-
   React.useEffect(() => {
+    const category =
+      quizOptions.category === "Any"
+        ? ""
+        : `&category=${getIdWithName(quizOptions.category)}`;
+    const difficulty =
+      quizOptions.difficulty === "Any"
+        ? ""
+        : `&difficulty=${quizOptions.difficulty}`;
     async function fetchData() {
-      setIsLoading(true);
       const fetcher = await fetch(
-        // "https://opentdb.com/api.php?amount=6&category=30&difficulty=easy&type=multiple"
-        `https://opentdb.com/api.php?amount=2&difficulty=easy&type=multiple&encode=base64`
+        `https://opentdb.com/api.php?amount=${quizOptions.numOfQuestions}${category}${difficulty}&type=multiple&encode=base64`
       );
       const res = await fetcher.json();
-      const stateFromApi = setInitialState(res)
-      dispatch({type: 'INITSTATE', payload: stateFromApi})
-      setIsLoading(false);
+      const initialState = (res) => {
+        const dataLoaded = res.results.length > 0;
+        return {
+          answerKey: dataLoaded ? setAnswerKeyFromApiData(res) : null,
+          questionsAndAnswers: dataLoaded ? setQuestionsAndRandomizedAnswersFromApiData(res) : null, //prettier-ignore
+          userAnswers: {},
+          finalAnswerStyles: [],
+        };
+      };
+      dispatch({ type: "INITSTATE", payload: initialState(res) });
     }
     fetchData();
-  }, []);
-
-  function setInitialState(apiData) {
-    const answerKey = setAnswerKeyFromApiData(apiData);
-    const questionsAndAnswers = setQuestionsAndRandomizedAnswersFromApiData(apiData); //prettier-ignore
-    const userAnswers = {}
-    const finalAnswerStyles = []
-    return {
-      answerKey: answerKey,
-      questionsAndAnswers: questionsAndAnswers,
-      userAnswers: userAnswers,
-      finalAnswerStyles: finalAnswerStyles
-    }
-  }
+  }, [quizOptions]);
 
   function setAnswerKeyFromApiData(apiData) {
     //returns one large object with all q:a key value pairs
@@ -116,29 +119,23 @@ const App = () => {
         return obj;
       }
     });
-    const newAnswers = {...state.userAnswers, [question]: answer}
-    const newPayload = {questionsAndAnswers: newState, userAnswers: newAnswers}
-    dispatch({type: 'ANSWERSELECTED', payload: newPayload})
+    const newAnswers = { ...state.userAnswers, [question]: answer };
+    const newPayload = {
+      questionsAndAnswers: newState,
+      userAnswers: newAnswers,
+    };
+    dispatch({ type: "ANSWERSELECTED", payload: newPayload });
   };
 
-  function allQuestionsAnswered() {
-    //check if all questions are answered
-    if (Object.keys(state.userAnswers).length !== Object.keys(state.questionsAndAnswers).length) {
-      console.log("please answer all questions");
-      return false;
-    }
-    console.log("returning true")
-    console.log(state)
-    return true;
-  }
-
-  function setFinalAnswerStyle() {
-    if (allQuestionsAnswered()) {
+  function setFinalAnswerStyle(event) {
+    console.log(event.target.style);
+    const allQuestionsAnswered = Object.keys(state.userAnswers).length === Object.keys(state.questionsAndAnswers).length; //prettier-ignore
+    if (allQuestionsAnswered) {
       const correctAnswerStyle = {
-        backgroundColor: "#30DB1A",
+        backgroundColor: "#2ea41f",
       };
       const wrongAnswerStyle = {
-        backgroundColor: "#F02719",
+        backgroundColor: "#c4281c",
       };
       const selectedAnswer = {
         boxShadow: "inset 0 5px 8px 2px rgba(0, 0, 0, 0.5)",
@@ -146,8 +143,8 @@ const App = () => {
       const notSelectedAnswer = {
         boxShadow: "0 5px 8px rgba(0, 0, 0, 0.5), inset 0 -2px 6px 2px rgba(0, 0, 0, 0.5)", //prettier-ignore
       };
+      event.target.style.boxShadow = "inset 0 5px 8px 2px rgba(0, 0, 0, 0.5)"//change submit to look depressed
       const answerStyles = state.questionsAndAnswers.map((questionObject) => {
-        //questionObject has form {question: question, answers: [answers(4)]}
         const question = questionObject.question;
         const answers = questionObject.answers;
         const mappedAnswerStyles = answers.map((answerObject) => {
@@ -162,7 +159,6 @@ const App = () => {
           //if answer is in answer key, turn green, then check if answer is in user answers and increase correct answers
           if (state.answerKey[question] === answer) {
             if (state.userAnswers[question] === answer) {
-              //todo add to correct answers
               return { ...correctAnswerStyle, ...selectedAnswer };
             }
             return { ...correctAnswerStyle, ...notSelectedAnswer };
@@ -171,36 +167,49 @@ const App = () => {
         });
         return mappedAnswerStyles;
       });
-      dispatch({ type: "SUBMITANSWERS", payload: answerStyles});
-      //modal.show();
+      dispatch({ type: "SUBMITANSWERS", payload: answerStyles });
     }
   }
 
+  function changeOptions(optionChange) {
+    setQuizOptions((oldOptions) => optionChange)
+    //   ...oldOptions,
+    //   [optionChange.name]:
+    //     typeof optionChange.value === Number
+    //       ? Number(optionChange.value)
+    //       : optionChange.value,
+    // }))
+  }
+
   return (
-    <div className="app">
-      {isLoading ? (
-        <h1>Loading</h1>
-      ) : (
-        state.questionsAndAnswers.map((result, index) => {
-          return (
-            <QAContainer
-              key={index}
-              index={index}
-              question={result.question}
-              answers={result.answers}
-              eachAnswerStyle={
-                state.finalAnswerStyles.length > 0 ? state.finalAnswerStyles[index] : []
-              }
-              handleSelectedAnswer={handleSelectedAnswer}
-            />
-          );
-        })
-      )}
-      {isLoading || <SubmitAnswers handleClick={setFinalAnswerStyle} />}
-      <dialog className="modal">
-        <h1>Please answer all questions</h1>
-      </dialog>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div className="app">
+        <div className="modal-positioning">
+          {state.questionsAndAnswers &&
+            state.questionsAndAnswers.map((result, index) => {
+              return (
+                <QAContainer
+                  key={uuid()}
+                  index={index}
+                  question={result.question}
+                  answers={result.answers}
+                  eachAnswerStyle={
+                    state.finalAnswerStyles.length > 0
+                      ? state.finalAnswerStyles[index]
+                      : []
+                  }
+                  handleSelectedAnswer={handleSelectedAnswer}
+                />
+              );
+            })}
+          <SubmitAnswersButton handleClick={setFinalAnswerStyle} />
+          <QuizOptionsModal
+            quizOptions={quizOptions}
+            onOptionsChange={changeOptions}
+          ></QuizOptionsModal>
+        </div>
+      </div>
+    </ThemeProvider>
   );
 };
 
