@@ -17,6 +17,7 @@ const App = () => {
     difficulty: "Any",
     modalVisible: true,
   });
+  const [isQuizOver, setIsQuizOver] = useState(false)
   const [state, dispatch] = useReducer(reducer, {});
 
   function reducer(state, action) {
@@ -129,7 +130,6 @@ const App = () => {
   };
 
   function setFinalAnswerStyle(event) {
-    console.log(event.target.style);
     const allQuestionsAnswered = Object.keys(state.userAnswers).length === Object.keys(state.questionsAndAnswers).length; //prettier-ignore
     if (allQuestionsAnswered) {
       const correctAnswerStyle = {
@@ -139,12 +139,14 @@ const App = () => {
         backgroundColor: "#c4281c",
       };
       const selectedAnswer = {
-        boxShadow: "inset 0 5px 8px 2px rgba(0, 0, 0, 0.5)",
+        boxShadow:
+          "inset 0 5px 8px 2px rgba(0, 0, 0, 0.2), inset 2px 5px 8px 2px rgba(0, 0, 0, 0.4), inset -2px 5px 8px 2px rgba(0, 0, 0, 0.4)",
       };
       const notSelectedAnswer = {
         boxShadow: "0 5px 8px rgba(0, 0, 0, 0.5), inset 0 -2px 6px 2px rgba(0, 0, 0, 0.5)", //prettier-ignore
       };
-      event.target.style.boxShadow = "inset 0 5px 8px 2px rgba(0, 0, 0, 0.5)"//change submit to look depressed
+      //event.target.style.boxShadow =
+      //  "inset 0 5px 8px 2px rgba(0, 0, 0, 0.2), inset 2px 5px 8px 2px rgba(0, 0, 0, 0.4), inset -2px 5px 8px 2px rgba(0, 0, 0, 0.4)"; //change submit to look depressed
       const answerStyles = state.questionsAndAnswers.map((questionObject) => {
         const question = questionObject.question;
         const answers = questionObject.answers;
@@ -169,11 +171,25 @@ const App = () => {
         return mappedAnswerStyles;
       });
       dispatch({ type: "SUBMITANSWERS", payload: answerStyles });
+      setIsQuizOver(quizOver => !quizOver)
     }
   }
 
   function changeOptions(optionChange) {
-    setQuizOptions((oldOptions) => optionChange)
+    setQuizOptions((oldOptions) => optionChange);
+  }
+
+  function newGame() {
+    setQuizOptions(oldOptions => {
+      return {
+        ...oldOptions,
+        numOfQuestions: 0,
+        category: "Any",
+        difficulty: "Any",
+        modalVisible: true,
+      };
+    })
+      setIsQuizOver((oldVal) => !oldVal);
   }
 
   return (
@@ -197,7 +213,11 @@ const App = () => {
                 />
               );
             })}
-          <SubmitAnswersButton handleClick={setFinalAnswerStyle} />
+          <SubmitAnswersButton
+            handleClick={setFinalAnswerStyle}
+            isQuizOver={isQuizOver}
+            newGame={newGame}
+          />
           <QuizOptionsModal
             quizOptions={quizOptions}
             onOptionsChange={changeOptions}

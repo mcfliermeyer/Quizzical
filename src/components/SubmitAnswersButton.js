@@ -8,13 +8,14 @@ const StyledSubmitAnswersButton = styled.button`
   box-shadow: 0 5px 8px rgba(0, 0, 0, 0.5), inset 0 -2px 6px 2px rgba(0, 0, 0, 0.5);
 `;
 
-export default function SubmitAnswersButton({handleClick}) {
+export default function SubmitAnswersButton({handleClick, isQuizOver, newGame}) {
   return (
     <StyledSubmitAnswersButton
       className="submit-answers-btn"
-      onClick={handleClick}
+      onClick={isQuizOver ? newGame : handleClick}
+      // style={"background-color: #1a73d2"}
     >
-      Submit
+      {isQuizOver ? "Play Again?" : "Submit"}
     </StyledSubmitAnswersButton>
   );
 }

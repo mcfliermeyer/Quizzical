@@ -6,7 +6,6 @@ import {
   categoryInfo,
   difficultyInfo,
 } from "../utilities/radioBtnInfo";
-import uuid from "react-uuid";
 import SubmitAnswersButton from "./SubmitAnswersButton";
 
 const StyledQuizOptionsModal = styled.dialog`
@@ -74,7 +73,6 @@ const QuizOptionsModal = ({ quizOptions, onOptionsChange }) => {
       </StyledQuizOptionsModal>
     );
   } else {
-    console.log("no longer visible")
     return (
       <></>
     );
