@@ -10,7 +10,8 @@ function QAContainer({
 }) {
 
   const selectedStyle = {
-    boxShadow: "inset 0 5px 8px 2px rgba(0, 0, 0, 0.5)",
+    boxShadow:
+      "inset 0 5px 8px 2px rgba(0, 0, 0, 0.2), inset 2px 5px 8px 2px rgba(0, 0, 0, 0.4), inset -2px 5px 8px 2px rgba(0, 0, 0, 0.4)",
   };
   const unSelectedStyle = {
     boxShadow: "0 5px 8px rgba(0, 0, 0, 0.5), inset 0 -2px 6px 2px rgba(0, 0, 0, 0.5)", //prettier-ignore
