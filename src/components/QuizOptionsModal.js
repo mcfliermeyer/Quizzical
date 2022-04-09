@@ -9,18 +9,16 @@ import {
 import SubmitAnswersButton from "./SubmitAnswersButton";
 
 const StyledQuizOptionsModal = styled.dialog`
-  background-color: ${(props) => props.theme.colors.containerColor};
+  background-color: #e4ebf6;
+  box-shadow: 60px 60px 120px #a0a5ac, -60px -60px 120px #ffffff;
   display: flex;
   flex-direction: column;
   min-height: 80vh;
-  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
   padding: 1rem 1rem;
-  position: absolute;
-  top: -1rem;
-  left: 0;
-  z-index: 0;
   border: none;
-  border-radius: 15px;
+  border-radius: 32px;
 `;
 
 const QuizOptionsModal = ({ quizOptions, onOptionsChange }) => {
@@ -49,34 +47,28 @@ const QuizOptionsModal = ({ quizOptions, onOptionsChange }) => {
     }
   }
   function handleSubmit() {
-    onOptionsChange({...localQuizOptions, modalVisible: false})
+    onOptionsChange({ ...localQuizOptions, modalVisible: false });
   }
-  if (quizOptions.modalVisible) {
-    return (
-      <StyledQuizOptionsModal open className="modal">
-        <RadioButtonGroup
-          buttonsNeededInfo={questionsInfo}
-          onValueChange={onValueChange}
-          quizOptions={localQuizOptions}
-        ></RadioButtonGroup>
-        <RadioButtonGroup
-          buttonsNeededInfo={categoryInfo}
-          onValueChange={onValueChange}
-          quizOptions={localQuizOptions}
-        ></RadioButtonGroup>
-        <RadioButtonGroup
-          buttonsNeededInfo={difficultyInfo}
-          onValueChange={onValueChange}
-          quizOptions={localQuizOptions}
-        ></RadioButtonGroup>
-        <SubmitAnswersButton handleClick={handleSubmit} />
-      </StyledQuizOptionsModal>
-    );
-  } else {
-    return (
-      <></>
-    );
-  }
+  return (
+    <StyledQuizOptionsModal open className="modal">
+      <RadioButtonGroup
+        buttonsNeededInfo={questionsInfo}
+        onValueChange={onValueChange}
+        quizOptions={localQuizOptions}
+      ></RadioButtonGroup>
+      <RadioButtonGroup
+        buttonsNeededInfo={categoryInfo}
+        onValueChange={onValueChange}
+        quizOptions={localQuizOptions}
+      ></RadioButtonGroup>
+      <RadioButtonGroup
+        buttonsNeededInfo={difficultyInfo}
+        onValueChange={onValueChange}
+        quizOptions={localQuizOptions}
+      ></RadioButtonGroup>
+      <SubmitAnswersButton handleClick={handleSubmit} />
+    </StyledQuizOptionsModal>
+  );
 };
 
 export default QuizOptionsModal;

@@ -17,7 +17,7 @@ const App = () => {
     difficulty: "Any",
     modalVisible: true,
   });
-  const [isQuizOver, setIsQuizOver] = useState(false)
+  const [isQuizOver, setIsQuizOver] = useState(false);
   const [state, dispatch] = useReducer(reducer, {});
 
   function reducer(state, action) {
@@ -139,14 +139,11 @@ const App = () => {
         backgroundColor: "#c4281c",
       };
       const selectedAnswer = {
-        boxShadow:
-          "inset 0 5px 8px 2px rgba(0, 0, 0, 0.2), inset 2px 5px 8px 2px rgba(0, 0, 0, 0.4), inset -2px 5px 8px 2px rgba(0, 0, 0, 0.4)",
+        //boxShadow: "inset 0 5px 8px 2px rgba(0, 0, 0, 0.2), inset 2px 5px 8px 2px rgba(0, 0, 0, 0.4), inset -2px 5px 8px 2px rgba(0, 0, 0, 0.4)",
       };
       const notSelectedAnswer = {
-        boxShadow: "0 5px 8px rgba(0, 0, 0, 0.5), inset 0 -2px 6px 2px rgba(0, 0, 0, 0.5)", //prettier-ignore
+        //boxShadow:  `20px 20px 60px #70139d, -20px -20px 60px #b61fff`, //prettier-ignore
       };
-      //event.target.style.boxShadow =
-      //  "inset 0 5px 8px 2px rgba(0, 0, 0, 0.2), inset 2px 5px 8px 2px rgba(0, 0, 0, 0.4), inset -2px 5px 8px 2px rgba(0, 0, 0, 0.4)"; //change submit to look depressed
       const answerStyles = state.questionsAndAnswers.map((questionObject) => {
         const question = questionObject.question;
         const answers = questionObject.answers;
@@ -171,7 +168,7 @@ const App = () => {
         return mappedAnswerStyles;
       });
       dispatch({ type: "SUBMITANSWERS", payload: answerStyles });
-      setIsQuizOver(quizOver => !quizOver)
+      setIsQuizOver((quizOver) => !quizOver);
     }
   }
 
@@ -180,7 +177,7 @@ const App = () => {
   }
 
   function newGame() {
-    setQuizOptions(oldOptions => {
+    setQuizOptions((oldOptions) => {
       return {
         ...oldOptions,
         numOfQuestions: 0,
@@ -188,41 +185,43 @@ const App = () => {
         difficulty: "Any",
         modalVisible: true,
       };
-    })
-      setIsQuizOver((oldVal) => !oldVal);
+    });
+    setIsQuizOver((oldVal) => !oldVal);
   }
 
   return (
     <ThemeProvider theme={theme}>
       <div className="app">
-        <div className="modal-positioning">
-          {state.questionsAndAnswers &&
-            state.questionsAndAnswers.map((result, index) => {
-              return (
-                <QAContainer
-                  key={uuid()}
-                  index={index}
-                  question={result.question}
-                  answers={result.answers}
-                  eachAnswerStyle={
-                    state.finalAnswerStyles.length > 0
-                      ? state.finalAnswerStyles[index]
-                      : []
-                  }
-                  handleSelectedAnswer={handleSelectedAnswer}
-                />
-              );
-            })}
+        {state.questionsAndAnswers &&
+          state.questionsAndAnswers.map((result, index) => {
+            return (
+              <QAContainer
+                key={uuid()}
+                index={index}
+                question={result.question}
+                answers={result.answers}
+                eachAnswerStyle={
+                  state.finalAnswerStyles.length > 0
+                    ? state.finalAnswerStyles[index]
+                    : []
+                }
+                handleSelectedAnswer={handleSelectedAnswer}
+              />
+            );
+          })}
+        {!quizOptions.modalVisible && (
           <SubmitAnswersButton
             handleClick={setFinalAnswerStyle}
             isQuizOver={isQuizOver}
             newGame={newGame}
           />
+        )}
+        {quizOptions.modalVisible && (
           <QuizOptionsModal
             quizOptions={quizOptions}
             onOptionsChange={changeOptions}
-          ></QuizOptionsModal>
-        </div>
+          />
+        )}
       </div>
     </ThemeProvider>
   );

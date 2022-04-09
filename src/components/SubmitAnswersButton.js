@@ -3,17 +3,31 @@ import "../App.css";
 import styled from "styled-components";
 
 const StyledSubmitAnswersButton = styled.button`
-  background-color: ${(props) => props.theme.colors.clayButtonColor};
-  color: ${(props) => props.theme.colors.fontColor};
-  box-shadow: 0 5px 8px rgba(0, 0, 0, 0.5), inset 0 -2px 6px 2px rgba(0, 0, 0, 0.5);
+  display: block;
+  border: none;
+  border-radius: 15px;
+  padding: clamp(1rem, 1.2rem, 2rem) clamp(2rem, 5rem, 6rem);
+  margin-top: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+  color: #e4ebf6;
+  font-weight: 700;
+  font-size: 0.8rem;
+  @media (min-width: 425px) {
+    font-size: 0.95rem;
+  }
+  @media (min-width: 800px) {
+    font-size: 1.1rem;
+  }
+  box-shadow: 8px 8px 16px #5b5e62, -8px -8px 16px #ffffff;
+  background: linear-gradient(145deg, #8b7ffe, #6155e5);
+  border-radius: 20px;
 `;
 
 export default function SubmitAnswersButton({handleClick, isQuizOver, newGame}) {
   return (
     <StyledSubmitAnswersButton
-      className="submit-answers-btn"
       onClick={isQuizOver ? newGame : handleClick}
-      // style={"background-color: #1a73d2"}
     >
       {isQuizOver ? "Play Again?" : "Submit"}
     </StyledSubmitAnswersButton>

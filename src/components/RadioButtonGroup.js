@@ -13,11 +13,9 @@ const StyledRadioButtonGroup = styled.div`
     align-items: center;
     justify-content: center;
     padding: 0.7rem 1.2rem;
-    background-color: ${(props) => props.theme.colors.clayButtonColor};
-    color: white;
-    border-radius: 12px;
-    box-shadow: ${(props) => props.theme.boxShadows.notSelected};
+    color: #96a0bb;
     font-size: 0.8rem;
+    font-weight: 700;
     @media (min-width: 425px) {
       font-size: 1rem;
       padding: 0.9rem 1.5rem;
@@ -27,6 +25,10 @@ const StyledRadioButtonGroup = styled.div`
       padding: 1.1rem 2rem;
     }
     min-height: 100%;
+
+    box-shadow: 8px 8px 16px #5b5e62, -8px -8px 16px #ffffff;
+    background: linear-gradient(145deg, #f4fbff, #cdd4dd);
+    border-radius: 20px;
   }
 `;
 
@@ -46,11 +48,14 @@ const RadioButtonGroup = ({
   //prettier-ignore
   const buttonGroup = buttonsNeededInfo.map((buttonInfo, index) => {
       const selectedAnswer = {
-        boxShadow:
-          "inset 0 5px 8px 2px rgba(0, 0, 0, 0.2), inset 2px 5px 8px 2px rgba(0, 0, 0, 0.4), inset -2px 5px 8px 2px rgba(0, 0, 0, 0.4)",
+        boxShadow: `8px 8px 16px #5b5e62,
+             -8px -8px 16px #ffffff`,
+        background: `linear-gradient(145deg, #cdd4dd, #f4fbff)`,
+        color: `#6c5efe`,
       };
       const notSelectedAnswer = {
-        boxShadow: "0 5px 8px rgba(0, 0, 0, 0.5), inset 0 -2px 6px 2px rgba(0, 0, 0, 0.5)", //prettier-ignore
+        boxShadow: "8px 8px 16px #5b5e62, -8px -8px 16px #ffffff", //prettier-ignore
+        
       };
       const flexItem = {flex: "1", margin: ".5rem"}
       

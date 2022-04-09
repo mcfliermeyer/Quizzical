@@ -1,5 +1,43 @@
 import React from "react";
 import "../App.css";
+import styled from "styled-components";
+
+const StyledQAContainer = styled.div`
+  padding: 2rem 1.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: rgb(228, 231, 234);
+  max-width: 800px;
+  margin: 1rem auto;
+  background: ${(props) => props.theme.colors.containerColor};
+  @media (min-width: 425px) {
+    font-size: 1rem;
+  }
+  @media (min-width: 800px) {
+    font-size: 1.1rem;
+  }
+  //border-radius: 15px;
+  //box-shadow: ${(props) => props.theme.boxShadows.indentedGlass};
+  .clay-morphism-button {
+    border: none;
+    border-radius: 15px;
+    background: ${(props) => props.theme.colors.clayButtonColor};
+    color: ${(props) => props.theme.colors.fontColor};
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+    @media (min-width: 425px) {
+      font-size: 1rem;
+      padding: 0.9rem 1.5rem;
+    }
+    @media (min-width: 800px) {
+      font-size: 1.2rem;
+      padding: 1.1rem 1.7rem;
+    }
+    box-shadow: ${(props) => props.theme.boxShadows.buttonNotSelected};
+  }
+`;
 
 function QAContainer({
   question,
@@ -28,7 +66,7 @@ function QAContainer({
     }
   }
   return (
-    <div className="qa-container clay-morphism-container">
+    <StyledQAContainer>
       <h3 className="question">{question}</h3>
       <div className="qa-container__answer-container">
         <div className="qa-container__answer-container__grid-div">
@@ -72,7 +110,7 @@ function QAContainer({
           </button>
         </div>
       </div>
-    </div>
+    </StyledQAContainer>
   );
 }
 
