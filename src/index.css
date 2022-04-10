@@ -24,7 +24,7 @@ code {
 
 :root {
   --buttons-gap: 0.5rem;
-  --bg-color: #8b7ffe;
+  --bg-color: #878c91;
   --bg-color: #c9d1d9;
   --circles-color: rgba(51, 247, 231, 0.514);
 }
@@ -34,36 +34,17 @@ h3 {
 
 .app {
   margin: 0;
-  padding: 2rem;
+  padding: 0;
   height: 100%;
 }
 @media (min-width: 425px) {
 	.app {
-    padding: 3.5rem;
   }
 }
 @media (min-width: 800px) {
 	.app {
-    padding: 8rem;
+    padding: 3rem;
   }
-}
-
-.question {
-  margin: 0 0 25px;
-}
-
-.qa-container__answer-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  grid-template-rows: repeat(auto-fit, 1fr);
-  gap: var(--buttons-gap);
-}
-
-.qa-container__answer-container__grid-div {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  grid-template-rows: repeat(auto-fit, 1fr);
-  gap: var(--buttons-gap);
 }
 
 /* x,y,blur,spread */

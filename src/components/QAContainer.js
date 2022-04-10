@@ -1,10 +1,10 @@
-import React, {useState} from "react";
+import React from "react";
 import styled from "styled-components";
 import RadioButtonGroup from "./RadioButtonGroup";
 
 
 const StyledQAContainer = styled.div`
-  padding: 2rem 1.5rem;
+  padding: .2rem .1rem;
   text-align: center;
   font-size: 0.8rem;
   font-weight: 700;
@@ -28,12 +28,14 @@ function QAContainer({
   eachAnswerStyle,
 }) {
 
-  const buttonInfo = answers.map(answer => {
+  const buttonInfo = answers.map((answer, answerIndex) => {
+    const style = eachAnswerStyle.length > 0 ? eachAnswerStyle[answerIndex] : []
     return {
       name: question,
       value: answer.answer,
       label: answer.answer,
       index: index,
+      style: style,
     }
   })
 
@@ -59,50 +61,8 @@ function QAContainer({
         buttonsNeededInfo={buttonInfo}
         onValueChange={onValueChange}
         options={{[question]: optionAnswer().answer}}
+        title={question}
       />
-      {/* <h3 className="question">{question}</h3>
-      <div className="qa-container__answer-container">
-        <div className="qa-container__answer-container__grid-div">
-          <button
-            className="qa-container__answer-btn clay-morphism-button"
-            style={applyStyle(0)}
-            onClick={() =>
-              handleSelectedAnswer(question, index, answers[0].answer)
-            }
-          >
-            {answers[0].answer}
-          </button>
-          <button
-            className="qa-container__answer-btn clay-morphism-button"
-            style={applyStyle(1)}
-            onClick={() =>
-              handleSelectedAnswer(question, index, answers[1].answer)
-            }
-          >
-            {answers[1].answer}
-          </button>
-        </div>
-        <div className="qa-container__answer-container__grid-div">
-          <button
-            className="qa-container__answer-btn clay-morphism-button"
-            style={applyStyle(2)}
-            onClick={() =>
-              handleSelectedAnswer(question, index, answers[2].answer)
-            }
-          >
-            {answers[2].answer}
-          </button>
-          <button
-            className="qa-container__answer-btn clay-morphism-button"
-            style={applyStyle(3)}
-            onClick={() =>
-              handleSelectedAnswer(question, index, answers[3].answer)
-            }
-          >
-            {answers[3].answer}
-          </button>
-        </div>
-      </div> */}
     </StyledQAContainer>
   );
 }

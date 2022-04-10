@@ -137,20 +137,14 @@ const App = () => {
     dispatch({ type: "ANSWERSELECTED", payload: newPayload });
   };
 
-  function setFinalAnswerStyle(event) {
+  function setFinalAnswerStyle() {
     const allQuestionsAnswered = Object.keys(state.userAnswers).length === Object.keys(state.questionsAndAnswers).length; //prettier-ignore
     if (allQuestionsAnswered) {
       const correctAnswerStyle = {
-        backgroundColor: "#2ea41f",
+        border: "3px solid #2ea41f",
       };
       const wrongAnswerStyle = {
-        backgroundColor: "#c4281c",
-      };
-      const selectedAnswer = {
-        //boxShadow: "inset 0 5px 8px 2px rgba(0, 0, 0, 0.2), inset 2px 5px 8px 2px rgba(0, 0, 0, 0.4), inset -2px 5px 8px 2px rgba(0, 0, 0, 0.4)",
-      };
-      const notSelectedAnswer = {
-        //boxShadow:  `20px 20px 60px #70139d, -20px -20px 60px #b61fff`, //prettier-ignore
+        border: "3px solid #c4281c",
       };
       const answerStyles = state.questionsAndAnswers.map((questionObject) => {
         const question = questionObject.question;
@@ -162,16 +156,16 @@ const App = () => {
             state.answerKey[question] !== answer &&
             state.userAnswers[question] === answer
           ) {
-            return { ...wrongAnswerStyle, ...selectedAnswer };
+            return { ...wrongAnswerStyle};
           }
           //if answer is in answer key, turn green, then check if answer is in user answers and increase correct answers
           if (state.answerKey[question] === answer) {
             if (state.userAnswers[question] === answer) {
-              return { ...correctAnswerStyle, ...selectedAnswer };
+              return { ...correctAnswerStyle};
             }
-            return { ...correctAnswerStyle, ...notSelectedAnswer };
+            return { ...correctAnswerStyle};
           }
-          return notSelectedAnswer;
+          return "";
         });
         return mappedAnswerStyles;
       });
@@ -211,11 +205,11 @@ const App = () => {
                     question={result.question}
                     answers={result.answers}
                     selectedAnswer={selectedAnswersWithQuestions}
-                    // eachAnswerStyle={
-                    //   state.finalAnswerStyles.length > 0
-                    //     ? state.finalAnswerStyles[index]
-                    //     : []
-                    // }
+                    eachAnswerStyle={
+                      state.finalAnswerStyles.length > 0
+                        ? state.finalAnswerStyles[index]
+                        : []
+                    }
                     handleSelectedAnswer={handleSelectedAnswer}
                   />
                 );

@@ -55,16 +55,19 @@ const QuizOptionsModal = ({ quizOptions, onOptionsChange }) => {
         buttonsNeededInfo={questionsInfo}
         onValueChange={onValueChange}
         options={localQuizOptions}
+        title="How Many Questions?"
       ></RadioButtonGroup>
       <RadioButtonGroup
         buttonsNeededInfo={categoryInfo}
         onValueChange={onValueChange}
         options={localQuizOptions}
+        title="Genre"
       ></RadioButtonGroup>
       <RadioButtonGroup
         buttonsNeededInfo={difficultyInfo}
         onValueChange={onValueChange}
         options={localQuizOptions}
+        title="Difficulty"
       ></RadioButtonGroup>
       <SubmitAnswersButton handleClick={handleSubmit} />
     </StyledQuizOptionsModal>
