@@ -8,6 +8,7 @@ const StyledSubmitAnswersButton = styled.button`
   border-radius: 15px;
   padding: clamp(1rem, 1.2rem, 2rem) clamp(2rem, 5rem, 6rem);
   margin-top: 2rem;
+  margin-bottom: 1rem;
   margin-left: auto;
   margin-right: auto;
   color: #e4ebf6;

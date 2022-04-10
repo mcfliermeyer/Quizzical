@@ -3,6 +3,8 @@ import styled from "styled-components";
 import uuid from "react-uuid";
 
 const StyledRadioButtonGroup = styled.div`
+  flex: 1;
+  margin: .5rem;
   .radio {
     opacity: 0;
     position: absolute;
@@ -40,13 +42,8 @@ const StyledButtonGroupContainer = styled.div`
   text-align: center;
 `;
 
-const RadioButtonGroup = ({
-  buttonsNeededInfo,
-  onValueChange,
-  quizOptions,
-}) => {
-  //prettier-ignore
-  const buttonGroup = buttonsNeededInfo.map((buttonInfo, index) => {
+const RadioButtonGroup = ({buttonsNeededInfo, onValueChange, options,}) => {//prettier-ignore
+  const buttonGroup = buttonsNeededInfo.map((buttonInfo) => {
       const selectedAnswer = {
         boxShadow: `8px 8px 16px #5b5e62,
              -8px -8px 16px #ffffff`,
@@ -55,19 +52,16 @@ const RadioButtonGroup = ({
       };
       const notSelectedAnswer = {
         boxShadow: "8px 8px 16px #5b5e62, -8px -8px 16px #ffffff", //prettier-ignore
-        
       };
-      const flexItem = {flex: "1", margin: ".5rem"}
-      
     return (
-      <StyledRadioButtonGroup key={uuid()} style={flexItem}>
-        <label style={(quizOptions[buttonInfo.name] === buttonInfo.value ? selectedAnswer : notSelectedAnswer)}>
+      <StyledRadioButtonGroup key={uuid()}>
+        <label style={(options[buttonInfo.name] === buttonInfo.value ? selectedAnswer : notSelectedAnswer)}>
           <input
             className="radio"
             type="radio"
             name={buttonInfo.name}
             value={buttonInfo.value}
-            checked={quizOptions[buttonInfo.name] === buttonInfo.value}
+            checked={options[buttonInfo.name] === buttonInfo.value}
             onChange={onValueChange}
           />
           {buttonInfo.label}

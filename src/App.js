@@ -5,6 +5,7 @@ import QAContainer from "./components/QAContainer";
 import randomizeArray from "./utilities/randomizeArray";
 import SubmitAnswersButton from "./components/SubmitAnswersButton";
 import QuizOptionsModal from "./components/QuizOptionsModal";
+import StyledParentContainer from "./components/StyledParentContainer";
 import getIdWithName from "./utilities/categoryAndId.js";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./utilities/themeStyles";
@@ -17,6 +18,7 @@ const App = () => {
     difficulty: "Any",
     modalVisible: true,
   });
+  const [selectedAnswersWithQuestions, setSelectedAnswersWithQuestions] = useState({})
   const [isQuizOver, setIsQuizOver] = useState(false);
   const [state, dispatch] = useReducer(reducer, {});
 
@@ -93,6 +95,12 @@ const App = () => {
   }
 
   const handleSelectedAnswer = (question, index, answer) => {
+    setSelectedAnswersWithQuestions(old => {
+      return ({
+        ...old,
+        [question]: {answer: answer, index: index}
+      })
+    })
     const newState = state.questionsAndAnswers.map((obj, i) => {
       if (index === i) {
         return {
@@ -192,29 +200,34 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className="app">
-        {state.questionsAndAnswers &&
-          state.questionsAndAnswers.map((result, index) => {
-            return (
-              <QAContainer
-                key={uuid()}
-                index={index}
-                question={result.question}
-                answers={result.answers}
-                eachAnswerStyle={
-                  state.finalAnswerStyles.length > 0
-                    ? state.finalAnswerStyles[index]
-                    : []
-                }
-                handleSelectedAnswer={handleSelectedAnswer}
+        {state.questionsAndAnswers && (
+          <StyledParentContainer>
+            {state.questionsAndAnswers &&
+              state.questionsAndAnswers.map((result, index) => {
+                return (
+                  <QAContainer
+                    key={uuid()}
+                    index={index}
+                    question={result.question}
+                    answers={result.answers}
+                    selectedAnswer={selectedAnswersWithQuestions}
+                    // eachAnswerStyle={
+                    //   state.finalAnswerStyles.length > 0
+                    //     ? state.finalAnswerStyles[index]
+                    //     : []
+                    // }
+                    handleSelectedAnswer={handleSelectedAnswer}
+                  />
+                );
+              })}
+            {!quizOptions.modalVisible && (
+              <SubmitAnswersButton
+                handleClick={setFinalAnswerStyle}
+                isQuizOver={isQuizOver}
+                newGame={newGame}
               />
-            );
-          })}
-        {!quizOptions.modalVisible && (
-          <SubmitAnswersButton
-            handleClick={setFinalAnswerStyle}
-            isQuizOver={isQuizOver}
-            newGame={newGame}
-          />
+            )}
+          </StyledParentContainer>
         )}
         {quizOptions.modalVisible && (
           <QuizOptionsModal
