@@ -8,14 +8,14 @@ import {
 } from "../utilities/radioBtnInfo";
 import SubmitAnswersButton from "./SubmitAnswersButton";
 
-const StyledQuizOptionsModal = styled.dialog`
+const StyledQuizOptionsModal = styled.div`
   background-color: #e4ebf6;
   box-shadow: 60px 60px 120px #a0a5ac, -60px -60px 120px #ffffff;
   display: flex;
   flex-direction: column;
   min-height: 80vh;
   max-width: 800px;
-  margin: 0 auto;
+  margin: 1rem auto;
   padding: 1rem 1rem;
   border: none;
   border-radius: 32px;
@@ -50,7 +50,7 @@ const QuizOptionsModal = ({ quizOptions, onOptionsChange }) => {
     onOptionsChange({ ...localQuizOptions, modalVisible: false });
   }
   return (
-    <StyledQuizOptionsModal open className="modal">
+    <StyledQuizOptionsModal className="modal">
       <RadioButtonGroup
         buttonsNeededInfo={questionsInfo}
         onValueChange={onValueChange}

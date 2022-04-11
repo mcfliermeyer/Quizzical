@@ -9,8 +9,8 @@ const StyledQAContainer = styled.div`
   font-size: 0.8rem;
   font-weight: 700;
   color: rgb(228, 231, 234);
-  max-width: 800px;
-  margin: 1rem auto;
+  max-width: 700px;
+  margin: .1rem auto;
   @media (min-width: 425px) {
     font-size: 1rem;
   }

@@ -1,4 +1,3 @@
-import "./App.css";
 import { Buffer } from "buffer";
 import React, { useState, useReducer } from "react";
 import QAContainer from "./components/QAContainer";

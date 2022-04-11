@@ -4,7 +4,7 @@ import uuid from "react-uuid";
 
 const StyledRadioButtonGroup = styled.div`
   flex: 1;
-  margin: 0.5rem;
+  margin: 0.6rem;
   .radio {
     opacity: 0;
     position: absolute;
@@ -65,7 +65,7 @@ const NeumorphicContainer = styled.div`
   }
 `;
 const NeumorphicBorder = styled.div`
-  margin: 0.5rem;
+  margin: .7rem 1.5rem;
   padding: 4px;
   border-radius: 50px;
   background: #e4ebf6;
