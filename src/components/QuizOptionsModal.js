@@ -11,6 +11,7 @@ import SubmitAnswersButton from "./SubmitAnswersButton";
 const StyledQuizOptionsModal = styled.div`
   background-color: #e4ebf6;
   box-shadow: 60px 60px 120px #a0a5ac, -60px -60px 120px #ffffff;
+  box-shadow: 35px 35px 60px #3c358c, -15px -15px 70px #9e8bff;
   display: flex;
   flex-direction: column;
   min-height: 80vh;
@@ -26,6 +27,7 @@ const QuizOptionsModal = ({ quizOptions, onOptionsChange }) => {
     numOfQuestions: 0,
     category: "",
     difficulty: "",
+    isOption: true
   });
 
   function onValueChange(event) {

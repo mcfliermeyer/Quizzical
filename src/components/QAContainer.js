@@ -36,6 +36,7 @@ function QAContainer({
       label: answer.answer,
       index: index,
       style: style,
+      isOption: false,
     }
   })
 

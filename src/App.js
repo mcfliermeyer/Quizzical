@@ -140,10 +140,19 @@ const App = () => {
     const allQuestionsAnswered = Object.keys(state.userAnswers).length === Object.keys(state.questionsAndAnswers).length; //prettier-ignore
     if (allQuestionsAnswered) {
       const correctAnswerStyle = {
-        border: "3px solid #2ea41f",
+        boxShadow: `8px 8px 16px 3px #136108, -8px -8px 16px #ffffff`,
+        background: `linear-gradient(145deg, #1FA10E, #136108)`,
+        color: `#e4ebf6`,
       };
       const wrongAnswerStyle = {
-        border: "3px solid #c4281c",
+        boxShadow: `8px 8px 16px 3px #87260F, -8px -8px 16px #ffffff`, //87260F
+        background: `linear-gradient(145deg, #6b1d0c, #E34119)`,
+        color: `#e4ebf6`,
+      };
+      const genericStyle = {
+        background: `linear-gradient(145deg, #ffffff, #bfc5ce)`,
+        color: `#5f6267ce`,
+        boxShadow: "8px 8px 16px #5b5e62, -4px -4px 10px #ffffff",
       };
       const answerStyles = state.questionsAndAnswers.map((questionObject) => {
         const question = questionObject.question;
@@ -160,11 +169,11 @@ const App = () => {
           //if answer is in answer key, turn green, then check if answer is in user answers and increase correct answers
           if (state.answerKey[question] === answer) {
             if (state.userAnswers[question] === answer) {
-              return { ...correctAnswerStyle};
+              return { ...correctAnswerStyle, ...{background: `linear-gradient(145deg, #136108, #1FA10E)`}}
             }
             return { ...correctAnswerStyle};
           }
-          return "";
+          return genericStyle;
         });
         return mappedAnswerStyles;
       });

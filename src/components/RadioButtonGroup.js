@@ -5,6 +5,8 @@ import uuid from "react-uuid";
 const StyledRadioButtonGroup = styled.div`
   flex: 1;
   margin: 0.6rem;
+  background-color: #574dce;
+  border-radius: 20px;
   .radio {
     opacity: 0;
     position: absolute;
@@ -27,9 +29,7 @@ const StyledRadioButtonGroup = styled.div`
       padding: 1.1rem 2rem;
     }
     min-height: 100%;
-
-    box-shadow: 8px 8px 16px #5b5e62, -8px -8px 16px #ffffff;
-    background: linear-gradient(145deg, #f4fbff, #cdd4dd);
+    background: linear-gradient(145deg, #ffffff, #bfc5ce); //prettier-ignore
     border-radius: 20px;
   }
 `;
@@ -48,7 +48,6 @@ const NeumorphicContainer = styled.div`
   padding: 6px;
   background: #e4ebf6;
   box-shadow: inset 8px 8px 16px #b4bac2, inset -8px -8px 16px #ffffff;
-
   & h1 {
     color: #5f6267ce;
     display: block;
@@ -77,15 +76,25 @@ const RadioButtonGroup = ({ buttonsNeededInfo, onValueChange, options, title }) 
   const buttonGroup = buttonsNeededInfo.map((buttonInfo, index) => {
       const styleOfButton =
         buttonInfo.style === undefined ? `` : buttonInfo.style;
-      const selectedAnswer = {
-        boxShadow: `8px 8px 16px #5b5e62,
-             -8px -8px 16px #ffffff`,
-        background: `linear-gradient(145deg, #cdd4dd, #f4fbff)`,
-        color: `#6c5efe`,
-        ...styleOfButton
-      };
+      const selectedAnswer = () => {
+        if (options.isOption) {
+          return {
+            background: `linear-gradient(145deg, #413A9B, #6D60FF)`,
+            boxShadow: `inset 8px 8px 13px #2C2767, inset 9px 9px 10px #8374FF`,
+            color: `#e4ebf6`,
+            ...styleOfButton,
+          };
+        }
+        return ({
+          boxShadow: `8px 8px 16px 3px #574dce,
+              -8px -8px 16px #ffffff`,
+          background: `linear-gradient(145deg, #413A9B, #6D60FF)`,
+          color: `#e4ebf6`,
+          ...styleOfButton,
+        })
+      }
       const notSelectedAnswer = {
-        boxShadow: "8px 8px 16px #5b5e62, -8px -8px 16px #ffffff", //prettier-ignore
+        boxShadow: "8px 8px 16px #5b5e62, -4px -4px 10px #ffffff", //prettier-ignore
         ...styleOfButton,
       };
       
@@ -94,7 +103,7 @@ const RadioButtonGroup = ({ buttonsNeededInfo, onValueChange, options, title }) 
             <label
               style={
                 options[buttonInfo.name] === buttonInfo.value
-                  ? selectedAnswer
+                  ? selectedAnswer()
                   : notSelectedAnswer
               }
             >

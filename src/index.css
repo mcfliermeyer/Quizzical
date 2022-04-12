@@ -11,10 +11,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
-  background-color: var(--bg-color);
   position: relative;
   height: 100%;
   width: 100%;
+  background: var(--bg-color-gradient);
+  background-attachment: fixed;
+  /* background attachment makes it so whole screen is filled by gradient */
 }
 
 code {
@@ -24,6 +26,9 @@ code {
 
 :root {
   --buttons-gap: 0.5rem;
+  --bg-color-gradient: linear-gradient(145deg, #6d60ff, #413a9b);
+  --bg-color: #6b1d0c;
+  
   --bg-color: #c9d1d9;
   --circles-color: rgba(51, 247, 231, 0.514);
 }
@@ -32,7 +37,7 @@ h3, h1 {
 }
 
 .app {
-  position: relative;
+  /* position: relative; */
   margin-top: 1rem;  
   margin-bottom: 1rem;
   padding-bottom: 1rem;
@@ -41,7 +46,7 @@ h3, h1 {
 @media (min-width: 800px) {
 	.app {
     padding: 3rem;
-  }
+  };
 }
 
 /* x,y,blur,spread */
